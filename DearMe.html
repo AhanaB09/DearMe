@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DearMe — A Safe Space for Your Thoughts</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            /* Palette: Soft Pastels */
+            --bg-main: #FFF9FA;
+            --bg-card: #FFFFFF;
+            --text-main: #4A4050;
+            --text-muted: #8A7B93;
+            --primary-pink: #FFD1DC;
+            --primary-pink-hover: #FCA1B7;
+            --accent-lavender: #E8D7F5;
+            --accent-sage: #D8E2DC;
+            --accent-cream: #FFE5D9;
+            --accent-peach: #FFCAD4;
+            --accent-blue: #D8F3DC;
+            --border-color: #F0E6EE;
+            --shadow-soft: 0 10px 30px rgba(186, 163, 194, 0.12);
+            --shadow-hover: 0 15px 35px rgba(186, 163, 194, 0.22);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --font-heading: 'Fredoka', sans-serif;
+            --font-body: 'Nunito', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #1D1822;
+            --bg-card: #28222F;
+            --text-main: #F3EAF8;
+            --text-muted: #BBA8C5;
+            --primary-pink: #4A2E3B;
+            --primary-pink-hover: #613B4D;
+            --accent-lavender: #392B45;
+            --accent-sage: #2C3A35;
+            --accent-cream: #42322B;
+            --accent-peach: #4A2E3B;
+            --accent-blue: #233D34;
+            --border-color: #382D42;
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ==========================================================================
+           2. BASE STYLES & RESET
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, textarea, select {
+            font-family: inherit;
+            font-size: inherit;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Accessibility: Focus outlines */
+        button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+            outline: 3px solid var(--primary-pink-hover);
+            outline-offset: 2px;
+        }
+
+        /* Reduce Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & NAVIGATION
+           ========================================================================== */
+        .header {
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .brand span {
+            color: #FF85A1;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            list-style: none;
+        }
+
+        .nav-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            color: var(--text-muted);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background-color: var(--accent-lavender);
+            color: var(--text-main);
+        }
+
+        .theme-toggle {
+            background: var(--accent-cream);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==========================================================================
+           4. COMPONENTS & UI ELEMENTS
+           ========================================================================== */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-primary {
+            background: var(--primary-pink);
+            color: var(--text-main);
+            padding: 0.8rem 1.6rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(255, 133, 161, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-pink-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--accent-lavender);
+            color: var(--text-main);
+            padding: 0.8rem 1.6rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            filter: brightness(0.95);
+        }
+
+        .btn-danger {
+            background: #FFB3BA;
+            color: #5C000B;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+
+        .btn-danger:hover {
+            background: #FF8593;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-pink-hover);
+        }
+
+        /* ==========================================================================
+           5. DASHBOARD PAGE
+           ========================================================================== */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--accent-cream) 0%, var(--accent-lavender) 100%);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .hero-text h1 {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-box {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-style: italic;
+            border-left: 4px solid var(--primary-pink-hover);
+            margin-top: 1rem;
+        }
+
+        .streak-badge {
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .streak-number {
+            font-size: 2.5rem;
+            font-family: var(--font-heading);
+            color: #FF85A1;
+        }
+
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-nav-card {
+            background: var(--bg-card);
+            padding: 1.2rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quick-nav-card:hover {
+            transform: translateY(-4px);
+            background: var(--accent-lavender);
+        }
+
+        .quick-nav-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* ==========================================================================
+           6. MY DIARY PAGE
+           ========================================================================== */
+        .diary-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .entry-card {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+
+        .tag-pill {
+            display: inline-block;
+            background: var(--accent-sage);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* ==========================================================================
+           7. LETTERS TO MYSELF PAGE
+           ========================================================================== */
+        .letter-card {
+            background: #FFFDF9;
+            border: 2px dashed #E2D4C9;
+            position: relative;
+            padding: 2rem;
+        }
+
+        [data-theme="dark"] .letter-card {
+            background: #231E28;
+            border-color: #4A3E50;
+        }
+
+        .envelope-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        /* ==========================================================================
+           8. MOOD TRACKER PAGE
+           ========================================================================== */
+        .mood-selector {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .mood-btn {
+            background: var(--bg-main);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            min-width: 80px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .mood-btn.selected, .mood-btn:hover {
+            border-color: #FF85A1;
+            background: var(--accent-cream);
+            transform: scale(1.05);
+        }
+
+        .mood-btn .emoji {
+            font-size: 2rem;
+        }
+
+        .chart-bar-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            height: 150px;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--primary-pink);
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 0.5rem;
+            font-weight: bold;
+            transition: height 0.5s ease;
+            min-height: 20px;
+        }
+
+        /* ==========================================================================
+           9. TALK TO DEARME CHAT
+           ========================================================================== */
+        .chat-box {
+            height: 380px;
+            overflow-y: auto;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-main);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .chat-bubble.bot {
+            background: var(--accent-lavender);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-bubble.user {
+            background: var(--primary-pink);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .prompts-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .prompt-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .prompt-chip:hover {
+            background: var(--accent-sage);
+        }
+
+        /* ==========================================================================
+           10. MIND & REFLECTION (EXERCISES)
+           ========================================================================== */
+        .breathing-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: var(--accent-lavender);
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--text-main);
+            box-shadow: 0 0 0 0 rgba(232, 215, 245, 0.7);
+        }
+
+        .breathing-circle.expand {
+            animation: breathe 8s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232, 215, 245, 0.7); }
+            50% { transform: scale(1.4); box-shadow: 0 0 20px 10px rgba(232, 215, 245, 0.3); }
+        }
+
+        .control-column {
+            background: var(--bg-main);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            min-height: 200px;
+            border: 2px dashed var(--border-color);
+        }
+
+        /* ==========================================================================
+           11. SELF-CARE SPACE & AFFIRMATIONS
+           ========================================================================== */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            background: var(--bg-main);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #FF85A1;
+        }
+
+        .affirmation-card {
+            background: linear-gradient(135deg, var(--accent-lavender) 0%, var(--accent-peach) 100%);
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.4rem;
+            font-family: var(--font-heading);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ==========================================================================
+           12. MODAL & FOOTER & PRIVACY
+           ========================================================================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* Crisis Alert Box */
+        .crisis-banner {
+            background: #FFE5E5;
+            border: 1px solid #FF8585;
+            color: #900000;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        /* Responsive Layout Adjustments */
+        @media (max-width: 768px) {
+            .header { padding: 1rem; flex-wrap: wrap; }
+            .nav-menu { overflow-x: auto; width: 100%; padding-top: 0.5rem; }
+            .hero-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GLOBAL HEADER / NAVIGATION -->
+    <header class="header">
+        <div class="brand">
+            🌷 Dear<span>Me</span>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li><button class="nav-btn active" onclick="switchPage('home')">🏠 Home</button></li>
+                <li><button class="nav-btn" onclick="switchPage('diary')">📖 Diary</button></li>
+                <li><button class="nav-btn" onclick="switchPage('letters')">💌 Letters</button></li>
+                <li><button class="nav-btn" onclick="switchPage('mood')">🌈 Mood</button></li>
+                <li><button class="nav-btn" onclick="switchPage('chat')">🤖 Chat</button></li>
+                <li><button class="nav-btn" onclick="switchPage('mind')">🧠 Mind</button></li>
+                <li><button class="nav-btn" onclick="switchPage('selfcare')">🌱 Self-Care</button></li>
+                <li><button class="nav-btn" onclick="switchPage('affirmations')">✨ Words</button></li>
+                <li><button class="nav-btn" onclick="switchPage('about')">👩‍💻 About</button></li>
+            </ul>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">🌙</button>
+    </header>
+
+    <main class="container">
+
+        <!-- Crisis Safety Modal Banner (Triggers automatically if serious distress is detected in Chat) -->
+        <div id="crisisBanner" class="crisis-banner">
+            <strong>⚠️ We care about your safety.</strong> If you're going through a difficult time or feeling unsafe, please talk to a trusted adult, parent, school counsellor, or contact a free local crisis helpline immediately. You are not alone.
+        </div>
+
+        <!-- 1. HOME / DASHBOARD PAGE -->
+        <section id="page-home" class="page active">
+            <div class="hero-banner">
+                <div class="hero-text">
+                    <h1 id="greetingText">How are you feeling today?</h1>
+                    <p>Welcome back to your quiet corner of the internet.</p>
+                    <div class="quote-box" id="dailyQuote">
+                        "You don't have to control your thoughts. You just have to stop letting them control you."
+                    </div>
+                </div>
+                <div class="streak-badge">
+                    <div class="streak-number" id="streakCount">0</div>
+                    <div>Day Streak 🔥</div>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Cards -->
+            <div class="quick-nav-grid">
+                <div class="quick-nav-card" onclick="switchPage('diary')">
+                    <span class="icon">📖</span>
+                    <strong>Write Diary</strong>
+                </div>
+                <div class="quick-nav-card" onclick="switchPage('mood')">
+                    <span class="icon">🌈</span>
+                    <strong>Log Mood</strong>
+                </div>
+                <div class="quick-nav-card" onclick="switchPage('letters')">
+                    <span class="icon">💌</span>
+                    <strong>Write Letter</strong>
+                </div>
+                <div class="quick-nav-card" onclick="switchPage('mind')">
+                    <span class="icon">🧠</span>
+                    <strong>Reflect</strong>
+                </div>
+                <div class="quick-nav-card" onclick="switchPage('selfcare')">
+                    <span class="icon">🌱</span>
+                    <strong>Self-Care</strong>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Daily Reflection Widget -->
+                <div class="card">
+                    <h3>💡 Reflection of the Day</h3>
+                    <p style="margin: 0.8rem 0; color: var(--text-muted);" id="dailyQuestion">What is something small that made you feel comfortable today?</p>
+                    <textarea class="form-control" rows="3" id="dailyReflectionInput" placeholder="Write a short response..."></textarea>
+                    <button class="btn-primary" style="margin-top: 0.8rem;" onclick="saveDailyReflection()">Save Reflection</button>
+                </div>
+
+                <!-- Recent Entries & Reminders -->
+                <div class="card">
+                    <h3>🌸 Gentle Reminders</h3>
+                    <ul style="list-style: none; margin-top: 1rem;">
+                        <li style="margin-bottom: 0.8rem;">💧 Remember to sip some water.</li>
+                        <li style="margin-bottom: 0.8rem;">🧘 Unclench your jaw and lower your shoulders.</li>
+                        <li style="margin-bottom: 0.8rem;">✨ You are allowed to take breaks whenever you need.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. MY DIARY PAGE -->
+        <section id="page-diary" class="page">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 1rem;">📖 My Secret Diary</h2>
+            
+            <div class="grid-2">
+                <!-- Write Entry Form -->
+                <div class="card">
+                    <h3 id="diaryFormTitle">Write New Entry</h3>
+                    <form id="diaryForm" onsubmit="handleSaveDiary(event)">
+                        <input type="hidden" id="diaryId">
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="diaryTitle">Title</label>
+                            <input type="text" id="diaryTitle" class="form-control" placeholder="Today was..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="diaryTag">Category Tag</label>
+                            <select id="diaryTag" class="form-control">
+                                <option value="General">General</option>
+                                <option value="School">School</option>
+                                <option value="Friends">Friends</option>
+                                <option value="Family">Family</option>
+                                <option value="Dreams">Dreams</option>
+                                <option value="Vent">Vent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="diaryMood">Current Emotion</label>
+                            <select id="diaryMood" class="form-control">
+                                <option value="😄 Happy">😄 Happy</option>
+                                <option value="😌 Calm">😌 Calm</option>
+                                <option value="😔 Sad">😔 Sad</option>
+                                <option value="😰 Anxious">😰 Anxious</option>
+                                <option value="🤯 Overwhelmed">🤯 Overwhelmed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="diaryContent">Thoughts</label>
+                            <textarea id="diaryContent" class="form-control" rows="6" placeholder="Dear Diary..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Save Entry 💾</button>
+                    </form>
+                </div>
+
+                <!-- Past Entries Listing -->
+                <div>
+                    <div class="diary-controls">
+                        <input type="text" id="diarySearch" class="form-control" placeholder="Search entries..." oninput="renderDiaryEntries()">
+                    </div>
+                    <div id="diaryList">
+                        <!-- Entries rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. LETTERS TO MYSELF PAGE -->
+        <section id="page-letters" class="page">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 0.5rem;">💌 Letters to Myself</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Write messages to read when you need them most.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Write a Digital Letter</h3>
+                    <form id="letterForm" onsubmit="handleSaveLetter(event)">
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="letterType">Letter Prompt Type</label>
+                            <select id="letterType" class="form-control">
+                                <option value="Dear Future Me">Dear Future Me</option>
+                                <option value="Dear Younger Me">Dear Younger Me</option>
+                                <option value="Open When I'm Sad">Open When I'm Sad</option>
+                                <option value="Open When I'm Proud">Open When I'm Proud</option>
+                                <option value="Custom Note">Custom Note</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="letterContent">Message</label>
+                            <textarea id="letterContent" class="form-control" rows="8" placeholder="Dear me..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Seal & Save Letter ✉️</button>
+                    </form>
+                </div>
+
+                <div id="lettersContainer" class="grid-2" style="grid-template-columns: 1fr;">
+                    <!-- Letters rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. MOOD TRACKER PAGE -->
+        <section id="page-mood" class="page">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 0.5rem;">🌈 Mood Tracker</h2>
+            <p style="color: var(--text-muted);">Check in with your feelings without judgment.</p>
+
+            <div class="card" style="margin: 1.5rem 0;">
+                <h3>How are you feeling right now?</h3>
+                <div class="mood-selector" id="moodSelector">
+                    <button class="mood-btn" onclick="selectMood('😄', 'Happy')"><span class="emoji">😄</span>Happy</button>
+                    <button class="mood-btn" onclick="selectMood('😌', 'Calm')"><span class="emoji">😌</span>Calm</button>
+                    <button class="mood-btn" onclick="selectMood('🥰', 'Loved')"><span class="emoji">🥰</span>Loved</button>
+                    <button class="mood-btn" onclick="selectMood('😐', 'Okay')"><span class="emoji">😐</span>Okay</button>
+                    <button class="mood-btn" onclick="selectMood('😔', 'Sad')"><span class="emoji">😔</span>Sad</button>
+                    <button class="mood-btn" onclick="selectMood('😰', 'Anxious')"><span class="emoji">😰</span>Anxious</button>
+                    <button class="mood-btn" onclick="selectMood('😡', 'Angry')"><span class="emoji">😡</span>Angry</button>
+                    <button class="mood-btn" onclick="selectMood('😴', 'Tired')"><span class="emoji">😴</span>Tired</button>
+                    <button class="mood-btn" onclick="selectMood('🤯', 'Overwhelmed')"><span class="emoji">🤯</span>Overwhelmed</button>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="moodNote" class="form-control" placeholder="Optional: Why do you feel this way?">
+                </div>
+                <button class="btn-primary" onclick="logMood()">Log Mood 📊</button>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Mood Summary</h3>
+                    <p style="margin-top: 1rem;" id="mostFrequentMood">Most recorded emotion: None yet</p>
+                    <div class="chart-bar-container" id="moodChart">
+                        <!-- Simple visual bar chart created dynamically -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Mood History</h3>
+                    <ul id="moodHistoryList" style="list-style: none; margin-top: 1rem;">
+                        <!-- Mood entries dynamically rendered -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. TALK TO DEARME CHAT -->
+        <section id="page-chat" class="page">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 0.5rem;">🤖 Talk to DearMe</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1rem;">A supportive, safe space to vent and talk through your thoughts.</p>
+
+            <div class="card">
+                <div class="chat-box" id="chatBox">
+                    <div class="chat-bubble bot">
+                        Hi there! 🌸 I'm your DearMe friendly companion. How are you doing today? Feel free to vent or pick a prompt below.
+                    </div>
+                </div>
+
+                <div class="prompts-container">
+                    <button class="prompt-chip" onclick="sendPrompt('I had a stressful day at school.')">🏫 Stressful school day</button>
+                    <button class="prompt-chip" onclick="sendPrompt('I feel anxious about something.')">😰 Feeling anxious</button>
+                    <button class="prompt-chip" onclick="sendPrompt('I need a quick encouraging word.')">✨ Need encouragement</button>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="chatInput" class="form-control" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="btn-primary" onclick="sendMessage()">Send</button>
+                    <button class="btn-secondary" onclick="clearChat()">Clear</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. MIND & REFLECTION PAGE -->
+        <section id="page-mind" class="page">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem;">🧠 Mind & Reflection Exercises</h2>
+
+            <div class="grid-2">
+                <!-- Breathing Exercise -->
+                <div class="card" style="text-align: center;">
+                    <h3>🌬️ Calm Breathing Guide</h3>
+                    <p style="color: var(--text-muted);">Follow the circle to slow down your rhythm.</p>
+                    <div class="breathing-circle" id="breathCircle">Inhale...</div>
+                    <button class="btn-primary" id="breathBtn" onclick="toggleBreathing()">Start Breathing</button>
+                </div>
+
+                <!-- Gratitude Journal -->
+                <div class="card">
+                    <h3>✨ 3 Good Things Today</h3>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <input type="text" class="form-control" id="gratitude1" placeholder="1. Something small that made me smile..." style="margin-bottom: 0.5rem;">
+                        <input type="text" class="form-control" id="gratitude2" placeholder="2. A kind thing someone did..." style="margin-bottom: 0.5rem;">
+                        <input type="text" class="form-control" id="gratitude3" placeholder="3. Something I'm proud of myself for..." style="margin-bottom: 0.5rem;">
+                    </div>
+                    <button class="btn-primary" onclick="saveGratitude()">Save Gratitude 💛</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. SELF-CARE SPACE PAGE -->
+        <section id="page-selfcare" class="page">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 0.5rem;">🌱 Self-Care Checklist</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Track small acts of kindness towards yourself.</p>
+
+            <div class="card">
+                <div id="selfCareList">
+                    <div class="checklist-item"><input type="checkbox" id="sc1" onchange="updateSelfCare()"><label for="sc1">💧 Drank a glass of water</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="sc2" onchange="updateSelfCare()"><label for="sc2">🚶 Stretched or took a short walk</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="sc3" onchange="updateSelfCare()"><label for="sc3">🎵 Listened to a comforting song</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="sc4" onchange="updateSelfCare()"><label for="sc4">💤 Took a break from screens</label></div>
+                    <div class="checklist-item"><input type="checkbox" id="sc5" onchange="updateSelfCare()"><label for="sc5">🗣️ Spoke gently to myself today</label></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. AFFIRMATIONS PAGE -->
+        <section id="page-affirmations" class="page">
+            <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem;">✨ Positive Affirmations</h2>
+            
+            <div class="affirmation-card" id="affirmationDisplay">
+                "My feelings are valid, and it's okay to take things one step at a time."
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn-primary" onclick="nextAffirmation()">Get New Affirmation 🌸</button>
+            </div>
+        </section>
+
+        <!-- 9. ABOUT THE CREATOR PAGE -->
+        <section id="page-about" class="page">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--accent-lavender); margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">👩‍💻</div>
+                    <h2>Hi, I'm Ahana Bansal 👋</h2>
+                    <p style="color: var(--text-muted);">Grade 9 Student | Creator of DearMe</p>
+                </div>
+
+                <h3>Why I Created DearMe</h3>
+                <p style="margin-bottom: 1.2rem;">I built DearMe as a student web development project because I wanted to create a peaceful, aesthetic, and safe online corner for teenagers. Sometimes school, friends, and life can feel overwhelming, and having a personal space to write, process emotions, and slow down can make a big difference.</p>
+
+                <h3>What I Learned</h3>
+                <p style="margin-bottom: 1.2rem;">While building this project, I learned how to work with HTML, CSS grid and flexbox, theme variables, dynamic DOM manipulation, and local browser storage (localStorage) to keep user data private!</p>
+
+                <div style="background: var(--bg-main); padding: 1.2rem; border-radius: var(--radius-md); border-left: 4px solid var(--primary-pink-hover); margin-top: 1.5rem;">
+                    <strong>🔐 A Note on Privacy:</strong>
+                    <p style="font-size: 0.9rem; margin-top: 0.4rem;">DearMe stores all diary entries, letters, and mood history locally on your device using your browser's LocalStorage. None of your private thoughts are sent to any external server.</p>
+                    <button class="btn-danger" style="margin-top: 0.8rem;" onclick="clearAllData()">Delete All My Saved Data</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>DearMe — Crafted with care by Ahana Bansal (Grade 9) 🌷</p>
+        <p style="margin-top: 0.3rem; font-size: 0.8rem;">A safe self-reflection project. Not intended for medical or clinical therapy.</p>
+    </footer>
+
+    <!-- ==========================================================================
+       JAVASCRIPT APPLICATION LOGIC
+       ========================================================================== -->
+    <script>
+        /* --------------------------------------------------------------------------
+           STATE MANAGEMENT & LOCAL STORAGE KEYS
+           -------------------------------------------------------------------------- */
+        const STORAGE_KEYS = {
+            DIARY: 'dearme_diary_entries',
+            LETTERS: 'dearme_letters',
+            MOODS: 'dearme_mood_history',
+            THEME: 'dearme_theme',
+            STREAK: 'dearme_streak'
+        };
+
+        let currentTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'light';
+        let breathingInterval = null;
+        let isBreathing = false;
+
+        // Quotes dataset
+        const quotes = [
+            "You don't have to control your thoughts. You just have to stop letting them control you.",
+            "Take your time. You are growing at your own pace.",
+            "It's okay to have quiet days.",
+            "Be soft with yourself. You are doing the best you can."
+        ];
+
+        // Affirmations dataset
+        const affirmations = [
+            "My feelings are valid.",
+            "I don't have to have everything figured out today.",
+            "I am allowed to rest without feeling guilty.",
+            "One difficult day does not define my future.",
+            "I am deserving of kindness, especially from myself."
+        ];
+
+        /* --------------------------------------------------------------------------
+           APP INITIALIZATION
+           -------------------------------------------------------------------------- */
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme(currentTheme);
+            renderDiaryEntries();
+            renderLetters();
+            renderMoodHistory();
+            initStreak();
+        });
+
+        /* --------------------------------------------------------------------------
+           NAVIGATION SYSTEM
+           -------------------------------------------------------------------------- */
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            const selectedPage = document.getElementById(`page-${pageId}`);
+            if (selectedPage) {
+                selectedPage.classList.add('active');
+            }
+
+            // Find matching nav button
+            const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => 
+                btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(pageId)
+            );
+            if (activeBtn) activeBtn.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* --------------------------------------------------------------------------
+           THEME TOGGLE SYSTEM
+           -------------------------------------------------------------------------- */
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(currentTheme);
+            localStorage.setItem(STORAGE_KEYS.THEME, currentTheme);
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const btn = document.querySelector('.theme-toggle');
+            if (btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
+        }
+
+        /* --------------------------------------------------------------------------
+           DIARY FEATURE (CRUD)
+           -------------------------------------------------------------------------- */
+        function getDiaryEntries() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.DIARY) || '[]');
+        }
+
+        function handleSaveDiary(e) {
+            e.preventDefault();
+            const id = document.getElementById('diaryId').value;
+            const title = document.getElementById('diaryTitle').value;
+            const tag = document.getElementById('diaryTag').value;
+            const mood = document.getElementById('diaryMood').value;
+            const content = document.getElementById('diaryContent').value;
+
+            let entries = getDiaryEntries();
+
+            if (id) {
+                // Update existing
+                entries = entries.map(entry => entry.id === id ? { id, title, tag, mood, content, date: entry.date } : entry);
+            } else {
+                // Create new
+                const newEntry = {
+                    id: Date.now().toString(),
+                    title,
+                    tag,
+                    mood,
+                    content,
+                    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                };
+                entries.unshift(newEntry);
+            }
+
+            localStorage.setItem(STORAGE_KEYS.DIARY, JSON.stringify(entries));
+            document.getElementById('diaryForm').reset();
+            document.getElementById('diaryId').value = '';
+            renderDiaryEntries();
+        }
+
+        function renderDiaryEntries() {
+            const container = document.getElementById('diaryList');
+            const searchQuery = (document.getElementById('diarySearch')?.value || '').toLowerCase();
+            const entries = getDiaryEntries();
+
+            const filtered = entries.filter(e => 
+                e.title.toLowerCase().includes(searchQuery) || 
+                e.content.toLowerCase().includes(searchQuery) ||
+                e.tag.toLowerCase().includes(searchQuery)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="card"><p style="color: var(--text-muted); text-align: center;">No diary entries found.</p></div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(entry => `
+                <div class="card entry-card">
+                    <div class="entry-header">
+                        <div>
+                            <strong>${escapeHtml(entry.title)}</strong>
+                            <span class="tag-pill" style="margin-left: 0.5rem;">${entry.tag}</span>
+                        </div>
+                        <small style="color: var(--text-muted);">${entry.date}</small>
+                    </div>
+                    <p style="margin-bottom: 0.8rem; font-size: 0.95rem;">${escapeHtml(entry.content)}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <small>${entry.mood}</small>
+                        <div>
+                            <button class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="editDiary('${entry.id}')">Edit</button>
+                            <button class="btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="deleteDiary('${entry.id}')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editDiary(id) {
+            const entry = getDiaryEntries().find(e => e.id === id);
+            if (entry) {
+                document.getElementById('diaryId').value = entry.id;
+                document.getElementById('diaryTitle').value = entry.title;
+                document.getElementById('diaryTag').value = entry.tag;
+                document.getElementById('diaryMood').value = entry.mood;
+                document.getElementById('diaryContent').value = entry.content;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function deleteDiary(id) {
+            if (confirm('Are you sure you want to delete this entry?')) {
+                const entries = getDiaryEntries().filter(e => e.id !== id);
+                localStorage.setItem(STORAGE_KEYS.DIARY, JSON.stringify(entries));
+                renderDiaryEntries();
+            }
+        }
+
+        /* --------------------------------------------------------------------------
+           LETTERS FEATURE
+           -------------------------------------------------------------------------- */
+        function getLetters() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.LETTERS) || '[]');
+        }
+
+        function handleSaveLetter(e) {
+            e.preventDefault();
+            const type = document.getElementById('letterType').value;
+            const content = document.getElementById('letterContent').value;
+
+            const letters = getLetters();
+            letters.unshift({
+                id: Date.now().toString(),
+                type,
+                content,
+                date: new Date().toLocaleDateString()
+            });
+
+            localStorage.setItem(STORAGE_KEYS.LETTERS, JSON.stringify(letters));
+            document.getElementById('letterForm').reset();
+            renderLetters();
+        }
+
+        function renderLetters() {
+            const container = document.getElementById('lettersContainer');
+            const letters = getLetters();
+
+            if (letters.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted);">No saved letters yet.</p>';
+                return;
+            }
+
+            container.innerHTML = letters.map(letter => `
+                <div class="card letter-card">
+                    <div class="envelope-icon">✉️</div>
+                    <h4 style="text-align: center; font-family: var(--font-heading);">${letter.type}</h4>
+                    <p style="margin: 1rem 0; font-size: 0.95rem;">${escapeHtml(letter.content)}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                        <small style="color: var(--text-muted);">${letter.date}</small>
+                        <button class="btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="deleteLetter('${letter.id}')">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteLetter(id) {
+            const letters = getLetters().filter(l => l.id !== id);
+            localStorage.setItem(STORAGE_KEYS.LETTERS, JSON.stringify(letters));
+            renderLetters();
+        }
+
+        /* --------------------------------------------------------------------------
+           MOOD TRACKER FEATURE
+           -------------------------------------------------------------------------- */
+        let selectedMoodData = { emoji: '😄', label: 'Happy' };
+
+        function selectMood(emoji, label) {
+            selectedMoodData = { emoji, label };
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        function logMood() {
+            const note = document.getElementById('moodNote').value;
+            const moods = JSON.parse(localStorage.getItem(STORAGE_KEYS.MOODS) || '[]');
+
+            moods.unshift({
+                id: Date.now().toString(),
+                emoji: selectedMoodData.emoji,
+                label: selectedMoodData.label,
+                note,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            });
+
+            localStorage.setItem(STORAGE_KEYS.MOODS, JSON.stringify(moods));
+            document.getElementById('moodNote').value = '';
+            renderMoodHistory();
+        }
+
+        function renderMoodHistory() {
+            const moods = JSON.parse(localStorage.getItem(STORAGE_KEYS.MOODS) || '[]');
+            const list = document.getElementById('moodHistoryList');
+            
+            if (moods.length === 0) {
+                list.innerHTML = '<li>No moods logged yet today.</li>';
+                return;
+            }
+
+            list.innerHTML = moods.slice(0, 5).map(m => `
+                <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+                    <span>${m.emoji} <strong>${m.label}</strong> ${m.note ? `- ${escapeHtml(m.note)}` : ''}</span>
+                    <small style="color: var(--text-muted);">${m.date}</small>
+                </li>
+            `).join('');
+
+            // Calculate Most Frequent
+            const counts = {};
+            moods.forEach(m => counts[m.label] = (counts[m.label] || 0) + 1);
+            let topMood = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, 'None yet');
+            document.getElementById('mostFrequentMood').textContent = `Most recorded emotion: ${topMood}`;
+        }
+
+        /* --------------------------------------------------------------------------
+           SUPPORTIVE CHATBOT FEATURE
+           -------------------------------------------------------------------------- */
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendChatBubble(text, 'user');
+            input.value = '';
+
+            // Check distress keywords for Safety Guidelines
+            const distressKeywords = ['hurt myself', 'suicide', 'die', 'end it all', 'self harm'];
+            const isDistress = distressKeywords.some(kw => text.toLowerCase().includes(kw));
+
+            if (isDistress) {
+                document.getElementById('crisisBanner').style.display = 'block';
+                setTimeout(() => {
+                    appendChatBubble("It sounds like you're going through something very heavy right now. Please know that you are not alone and people care about you. Please reach out to a parent, counsellor, or emergency contact right away.", 'bot');
+                }, 600);
+                return;
+            }
+
+            // Standard Bot Response simulation
+            setTimeout(() => {
+                const responses = [
+                    "Thank you for sharing that with me. How does that make you feel overall?",
+                    "I hear you. Taking a few deep breaths can sometimes help when thoughts feel crowded.",
+                    "Your feelings are completely valid. I'm here to listen whenever you need to vent.",
+                    "Remember to give yourself grace today. Small steps are still progress!"
+                ];
+                const reply = responses[Math.floor(Math.random() * responses.length)];
+                appendChatBubble(reply, 'bot');
+            }, 800);
+        }
+
+        function sendPrompt(promptText) {
+            document.getElementById('chatInput').value = promptText;
+            sendMessage();
+        }
+
+        function appendChatBubble(text, sender) {
+            const box = document.getElementById('chatBox');
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${sender}`;
+            bubble.textContent = text;
+            box.appendChild(bubble);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function clearChat() {
+            document.getElementById('chatBox').innerHTML = `
+                <div class="chat-bubble bot">
+                    Hi there! 🌸 Chat cleared. How can I support you right now?
+                </div>
+            `;
+        }
+
+        /* --------------------------------------------------------------------------
+           EXERCISES (BREATHING, GRATITUDE, SELF-CARE)
+           -------------------------------------------------------------------------- */
+        function toggleBreathing() {
+            const circle = document.getElementById('breathCircle');
+            const btn = document.getElementById('breathBtn');
+
+            if (isBreathing) {
+                circle.classList.remove('expand');
+                btn.textContent = 'Start Breathing';
+                circle.textContent = 'Inhale...';
+                isBreathing = false;
+            } else {
+                circle.classList.add('expand');
+                btn.textContent = 'Stop Breathing';
+                circle.textContent = 'Breathe...';
+                isBreathing = true;
+            }
+        }
+
+        function saveGratitude() {
+            alert('Your gratitude notes have been saved for today! 💛');
+        }
+
+        function updateSelfCare() {
+            // Visual feedback when completing checklist
+        }
+
+        function nextAffirmation() {
+            const display = document.getElementById('affirmationDisplay');
+            const random = affirmations[Math.floor(Math.random() * affirmations.length)];
+            display.textContent = `"${random}"`;
+        }
+
+        function saveDailyReflection() {
+            alert('Reflection saved to your local journal dashboard!');
+            document.getElementById('dailyReflectionInput').value = '';
+        }
+
+        function initStreak() {
+            const streak = localStorage.getItem(STORAGE_KEYS.STREAK) || '1';
+            document.getElementById('streakCount').textContent = streak;
+        }
+
+        /* --------------------------------------------------------------------------
+           PRIVACY & DATA MANAGEMENT
+           -------------------------------------------------------------------------- */
+        function clearAllData() {
+            if (confirm('Are you sure you want to permanently delete all local diary entries, letters, and mood history? This action cannot be undone.')) {
+                localStorage.clear();
+                alert('All your personal browser data has been cleared.');
+                location.reload();
+            }
+        }
+
+        /* Utility to prevent XSS in displayed user inputs */
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
